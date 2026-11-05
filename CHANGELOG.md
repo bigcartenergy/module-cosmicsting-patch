@@ -12,4 +12,4 @@ All notable changes to `bigcartenergy/module-cosmicsting-patch` by Big Cart Ener
 
 ### Tested
 
-- Filled in from the bench before the release (see the README's Tested versions table).
+- Magento Open Source 2.4.9 (PHP 8.5, MySQL 8.4), 2.4.8 (PHP 8.3, MySQL 8.4) and 2.3.7-p4 (PHP 7.4, MySQL 5.7): install and compile, the REST checkout, customer, search and product-save flows, one SOAP call, the refusal of an XML-typed parameter with its log line, identical behaviour with and without the module on the two releases that already carry Adobe's fix, removal, and the unit suite on PHPUnit 9, 10 and 12. Alone and together with `bigcartenergy/module-sessionreaper-patch`.
