@@ -7,9 +7,10 @@ All notable changes to `bigcartenergy/module-cosmicsting-patch` by Big Cart Ener
 ### Added
 
 - A `before` plugin on `Magento\Framework\Webapi\ServiceInputProcessor::convertValue()` that refuses a conversion to `SimpleXMLElement` or `DOMElement`, the class itself or any subclass, directly or as an array item type, with the official message "Invalid data type". Simple types and `mixed` are never checked; every other request is untouched.
-- The same refusal for an object-typed custom attribute, which the processor builds without `convertValue()`: the attribute's type is resolved as the processor resolves it (the entity type of the owning object, then the custom attribute type locator) and refused when it is, or is an array of, an XML class. Simple and `mixed` attributes, unknown codes, scalar values, owners without an entity type and a locator failure are left to the processor.
+- The same refusal for an object-typed custom attribute, which the processor builds without `convertValue()`: the custom attributes container is recognised exactly as the processor recognises it (every key whose `SimpleDataObjectConverter::snakeCaseToUpperCamelCase()` form is `CustomAttributes`, not a fixed pair of spellings), the attribute's type is resolved as the processor resolves it (the entity type of the owning object, then the custom attribute type locator) and refused when it is, or is an array of, an XML class. Simple and `mixed` attributes, unknown codes, scalar values, owners without an entity type and a locator failure are left to the processor.
 - One log line per refusal in `var/log/bigcartenergy_cve-2024-34102.log`: UTC time, client IP address, request method and path, and the refused type. Never the request body. The `enableLog` argument of the plugin in `di.xml` turns it off.
 - Unit tests with harmless fixture classes, runnable standalone or through Magento's `dev/tests/unit`.
+- README: the log switch is a small module of the store's own whose `module.xml` declares a `<sequence>` on this module, so its `enableLog` override loads after this module's value and wins the configuration merge; the README gives the three files and the check that confirms the switch took.
 
 ### Tested
 

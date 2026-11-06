@@ -154,6 +154,53 @@ class ServiceInputProcessorPluginTest extends TestCase
         $this->assertRefused(['item' => $list[0]], $owner . '[]', $entityTypes, ['node' => XmlNode::class]);
     }
 
+    public function testAnXmlTypedCustomAttributeIsRefusedUnderEverySpellingTheProcessorRoutes(): void
+    {
+        foreach ($this->customAttributesKeySpellings() as $key) {
+            $data = [$key => [['attribute_code' => 'node', 'value' => ['name' => 'x']]]];
+            $this->assertRefused(
+                $data,
+                SearchCriteriaInterface::class,
+                [SearchCriteriaInterface::class => 'bench_entity'],
+                ['node' => XmlNode::class]
+            );
+        }
+    }
+
+    /**
+     * The spellings the processor's SimpleDataObjectConverter::snakeCaseToUpperCamelCase() maps to "CustomAttributes".
+     *
+     * @return string[]
+     */
+    private function customAttributesKeySpellings(): array
+    {
+        return [
+            'custom_attributes',
+            'customAttributes',
+            'CustomAttributes',
+            'Custom_Attributes',
+            'custom_Attributes',
+            '_custom_attributes',
+            'custom_attributes_',
+            'custom__attributes',
+        ];
+    }
+
+    public function testAKeyThatDoesNotNormaliseToCustomAttributesIsNotTreatedAsCustomAttributes(): void
+    {
+        $data = ['customattributes' => [['attribute_code' => 'node', 'value' => ['name' => 'x']]]];
+        self::assertNull(
+            $this->convert(
+                $data,
+                SearchCriteriaInterface::class,
+                [SearchCriteriaInterface::class => 'bench_entity'],
+                ['node' => XmlNode::class]
+            ),
+            'a key the processor does not route to custom attributes is not refused'
+        );
+        self::assertSame([], $this->locatorRequests, 'the locator is never consulted for a non-container key');
+    }
+
     public function testAnXmlTypedCustomAttributeRefusalIsLoggedWithItsType(): void
     {
         $logger = $this->createMock(RequestLogger::class);
